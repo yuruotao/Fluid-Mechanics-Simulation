@@ -1,0 +1,123 @@
+<html>
+<head>
+<title>Animation.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #0033b3;}
+.s1 { color: #080808;}
+.s2 { color: #8c8c8c; font-style: italic;}
+.s3 { color: #008080; font-weight: bold;}
+.s4 { color: #0037a6;}
+.s5 { color: #1750eb;}
+</style>
+</head>
+<body bgcolor="#ffffff">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#c0c0c0" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+Animation.py</font>
+</center></td></tr></table>
+<pre><span class="s0">from </span><span class="s1">__future__ </span><span class="s0">import </span><span class="s1">division</span>
+
+<span class="s0">import </span><span class="s1">matplotlib.animation </span><span class="s0">as </span><span class="s1">animation</span>
+<span class="s0">from </span><span class="s1">matplotlib.animation </span><span class="s0">import </span><span class="s1">PillowWriter</span>
+
+<span class="s0">from </span><span class="s1">main_program </span><span class="s0">import </span><span class="s1">*</span>
+
+
+<span class="s2"># 定义读取模拟中数据的函数</span>
+<span class="s0">def </span><span class="s1">read_datafile(iteration):</span>
+    <span class="s1">filename = </span><span class="s3">&quot;PUV{0}.txt&quot;</span><span class="s1">.format(iteration)</span>
+    <span class="s1">filepath = os.path.join(dir_path, filename)</span>
+    <span class="s1">arr = np.loadtxt(filepath, delimiter=</span><span class="s3">&quot;</span><span class="s4">\t</span><span class="s3">&quot;</span><span class="s1">)</span>
+    <span class="s1">rows, cols = arr.shape</span>
+    <span class="s1">p_p = np.zeros((rowpts, colpts))</span>
+    <span class="s1">u_p = np.zeros((rowpts, colpts))</span>
+    <span class="s1">v_p = np.zeros((rowpts, colpts))</span>
+    <span class="s1">p_arr = arr[:, </span><span class="s5">0</span><span class="s1">]</span>
+    <span class="s1">u_arr = arr[:, </span><span class="s5">1</span><span class="s1">]</span>
+    <span class="s1">v_arr = arr[:, </span><span class="s5">2</span><span class="s1">]</span>
+
+    <span class="s1">p_p = p_arr.reshape((rowpts, colpts))</span>
+    <span class="s1">u_p = u_arr.reshape((rowpts, colpts))</span>
+    <span class="s1">v_p = v_arr.reshape((rowpts, colpts))</span>
+
+    <span class="s0">return </span><span class="s1">p_p, u_p, v_p</span>
+
+
+<span class="s2"># 结果文件</span>
+<span class="s1">cwdir = os.getcwd()</span>
+<span class="s1">dir_path = os.path.join(cwdir, </span><span class="s3">&quot;Result&quot;</span><span class="s1">)</span>
+<span class="s1">os.chdir(dir_path)</span>
+
+<span class="s2"># 遍历directory中的文件</span>
+<span class="s1">filenames = []</span>
+<span class="s1">iterations = []</span>
+<span class="s0">for </span><span class="s1">root, dirs, files </span><span class="s0">in </span><span class="s1">os.walk(dir_path):</span>
+    <span class="s0">for </span><span class="s1">datafile </span><span class="s0">in </span><span class="s1">files:</span>
+        <span class="s0">if </span><span class="s3">&quot;PUV&quot; </span><span class="s0">in </span><span class="s1">datafile:</span>
+            <span class="s1">filenames.append(datafile)</span>
+            <span class="s1">no_ext_file = datafile.replace(</span><span class="s3">&quot;.txt&quot;</span><span class="s1">, </span><span class="s3">&quot;&quot;</span><span class="s1">).strip()</span>
+            <span class="s1">iter_no = int(no_ext_file.split(</span><span class="s3">&quot;V&quot;</span><span class="s1">)[-</span><span class="s5">1</span><span class="s1">])</span>
+            <span class="s1">iterations.append(iter_no)</span>
+
+<span class="s2"># 辨别最后的迭代与迭代数</span>
+<span class="s1">initial_iter = np.amin(iterations)</span>
+<span class="s1">final_iter = np.amax(iterations)</span>
+<span class="s1">inter = (final_iter - initial_iter) / (len(iterations) - </span><span class="s5">1</span><span class="s1">)</span>
+<span class="s1">number_of_frames = len(iterations)  </span><span class="s2"># int(final_iter/inter)+1</span>
+<span class="s1">sorted_iterations = np.sort(iterations)</span>
+
+<span class="s2"># 创建数组和网格</span>
+<span class="s1">x = np.linspace(</span><span class="s5">0</span><span class="s1">, length, colpts)</span>
+<span class="s1">y = np.linspace(</span><span class="s5">0</span><span class="s1">, breadth, rowpts)</span>
+<span class="s1">[X, Y] = np.meshgrid(x, y)</span>
+
+<span class="s2"># 定义streamplot的编号</span>
+<span class="s1">index_cut_x = int(colpts / </span><span class="s5">10</span><span class="s1">)</span>
+<span class="s1">index_cut_y = int(rowpts / </span><span class="s5">10</span><span class="s1">)</span>
+
+<span class="s2"># 产生空白图片</span>
+<span class="s1">fig = plt.figure(figsize=(</span><span class="s5">16</span><span class="s1">, </span><span class="s5">8</span><span class="s1">))</span>
+<span class="s1">ax = plt.axes(xlim=(</span><span class="s5">0</span><span class="s1">, length), ylim=(</span><span class="s5">0</span><span class="s1">, breadth))</span>
+
+<span class="s2"># 初始等高线图</span>
+<span class="s1">p_p, u_p, v_p = read_datafile(</span><span class="s5">0</span><span class="s1">)</span>
+<span class="s1">ax.set_xlim([</span><span class="s5">0</span><span class="s1">, length])</span>
+<span class="s1">ax.set_ylim([</span><span class="s5">0</span><span class="s1">, breadth])</span>
+<span class="s1">ax.set_xlabel(</span><span class="s3">&quot;$x$&quot;</span><span class="s1">, fontsize=</span><span class="s5">12</span><span class="s1">)</span>
+<span class="s1">ax.set_ylabel(</span><span class="s3">&quot;$y$&quot;</span><span class="s1">, fontsize=</span><span class="s5">12</span><span class="s1">)</span>
+<span class="s1">ax.set_title(</span><span class="s3">&quot;Frame No: 0&quot;</span><span class="s1">)</span>
+<span class="s1">cont = ax.contourf(X, Y, p_p)</span>
+<span class="s1">stream = ax.streamplot(X[::index_cut_y, ::index_cut_x], Y[::index_cut_y, ::index_cut_x],</span>
+                       <span class="s1">u_p[::index_cut_y, ::index_cut_x], v_p[::index_cut_y, ::index_cut_x], color=</span><span class="s3">&quot;k&quot;</span><span class="s1">)</span>
+<span class="s1">fig.colorbar(cont)</span>
+<span class="s1">fig.tight_layout()</span>
+
+
+<span class="s0">def </span><span class="s1">animate(i):</span>
+    <span class="s1">sys.stdout.write(</span><span class="s3">&quot;</span><span class="s4">\r</span><span class="s3">frame remain: {0:03d}&quot;</span><span class="s1">.format(len(sorted_iterations) - i))</span>
+    <span class="s1">sys.stdout.flush()</span>
+    <span class="s1">iteration = sorted_iterations[i]</span>
+    <span class="s1">p_p, u_p, v_p = read_datafile(iteration)</span>
+    <span class="s1">ax.clear()</span>
+    <span class="s1">ax.set_xlim([</span><span class="s5">0</span><span class="s1">, length])</span>
+    <span class="s1">ax.set_ylim([</span><span class="s5">0</span><span class="s1">, breadth])</span>
+    <span class="s1">ax.set_xlabel(</span><span class="s3">&quot;$x$&quot;</span><span class="s1">, fontsize=</span><span class="s5">12</span><span class="s1">)</span>
+    <span class="s1">ax.set_ylabel(</span><span class="s3">&quot;$y$&quot;</span><span class="s1">, fontsize=</span><span class="s5">12</span><span class="s1">)</span>
+    <span class="s1">ax.set_title(</span><span class="s3">&quot;Frame No: {0}&quot;</span><span class="s1">.format(i))</span>
+    <span class="s1">cont = ax.contourf(X, Y, p_p)</span>
+    <span class="s1">stream = ax.streamplot(X[::index_cut_y, ::index_cut_x], Y[::index_cut_y, ::index_cut_x],</span>
+                           <span class="s1">u_p[::index_cut_y, ::index_cut_x], v_p[::index_cut_y, ::index_cut_x], color=</span><span class="s3">&quot;k&quot;</span><span class="s1">)</span>
+    <span class="s0">return </span><span class="s1">cont, stream</span>
+
+
+<span class="s1">print(</span><span class="s3">&quot;########        animation        ########&quot;</span><span class="s1">)</span>
+<span class="s1">print(</span><span class="s3">&quot;#########################################&quot;</span><span class="s1">)</span>
+<span class="s1">anim = animation.FuncAnimation(fig, animate, frames=number_of_frames, interval=</span><span class="s5">50</span><span class="s1">, blit=</span><span class="s0">False</span><span class="s1">)</span>
+<span class="s1">movie_path = os.path.join(dir_path, </span><span class="s3">&quot;Animation.gif&quot;</span><span class="s1">)</span>
+<span class="s1">anim.save(</span><span class="s3">r&quot;{0}&quot;</span><span class="s1">.format(movie_path), writer=PillowWriter())</span>
+<span class="s1">print(</span><span class="s3">&quot;</span><span class="s4">\n</span><span class="s3">动画在Result中保存为Animation.gif&quot;</span><span class="s1">)</span>
+</pre>
+</body>
+</html>
