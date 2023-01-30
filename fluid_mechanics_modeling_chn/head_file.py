@@ -15,6 +15,8 @@ class Boundary:
 
 # 设置边界条件，便于PDE的求解
 # 种类有两种：dirichlet与neumann
+# define the boundary parameters for the sake of PDE solver
+# there are 2 kinds of boundaries, dirichlet and neumann
 
 class Space:
     def __init__(self):
@@ -137,7 +139,6 @@ def SetPBoundary(space, left, right, top, bottom):
         space.p[0, :] = bottom.value * space.dy + space.p[1, :]
 
 
-# 设置函数
 def SetTimeStep(CFL, space, fluid):
     with np.errstate(divide='ignore'):
         dt = CFL / np.sum([np.amax(space.u) / space.dx, np.amax(space.v) / space.dy])
@@ -258,6 +259,7 @@ def SetCentrePUV(space):
 
 
 # 保存边界内的速度与压力
+# save the pressure and velocity within the boundaries
 
 
 def MakeResultDirectory(wipe=False):
@@ -276,6 +278,7 @@ def MakeResultDirectory(wipe=False):
 
 
 # 将结果保存到Result里
+# save the result to Result
 
 
 def WriteToFile(space, iteration, interval):
@@ -288,3 +291,4 @@ def WriteToFile(space, iteration, interval):
                 for j in range(space.colpts):
                     f.write("{}\t{}\t{}\n".format(space.p_c[i, j], space.u_c[i, j], space.v_c[i, j]))
 # 在迭代间隔中将变量值进行保存
+# save the variables' value in each iteration

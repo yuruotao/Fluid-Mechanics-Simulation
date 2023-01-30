@@ -10,7 +10,8 @@ matplotlib.rcParams["font.sans-serif"] = ["KaiTi"]
 plt.rcParams['axes.unicode_minus'] = False
 ###############################################################################
 # 用户输入 user input
-# 定义空间、时间参数 define the parameters
+# 定义空间、时间参数
+# define the parameters
 length = 4
 breadth = 4
 colpts = 257
