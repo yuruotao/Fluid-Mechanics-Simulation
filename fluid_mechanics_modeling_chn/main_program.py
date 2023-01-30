@@ -1,5 +1,4 @@
 import sys
-
 import matplotlib.cm as cm
 import matplotlib.pyplot as plt
 import matplotlib.rcsetup
@@ -9,7 +8,8 @@ from head_file import *
 matplotlib.rcParams["font.sans-serif"] = ["KaiTi"]
 plt.rcParams['axes.unicode_minus'] = False
 ###############################################################################
-# 用户输入 user input
+# 用户输入
+# user input
 # 定义空间、时间参数
 # define the parameters
 length = 4
@@ -25,21 +25,23 @@ time = 10
 
 ###############################MISC############################################
 CFL_number = 0.8  # 结果收敛时，请勿改变
-file_flag = 1  # 为1时将结果输入文档
-interval = 100  # 每一个interval的迭代数对结果进行记录
-plot_flag = 1  # 为1时能够将图画出
+file_flag = 1  # record the result to the file when equal to 1
+interval = 100  # record the data after each interval
+plot_flag = 1  # plot when equal to 1
 
-# 定义物理参数
+
+
+# define physical parameters
 rho = 1
 mu = 0.01
 
-# 定义动量参数
+# define the momentum parameters
 u_in = 1
 v_wall = 0
 p_out = 0
-# u_in为盖子处速度
-# v_wall为壁处速度
-# p_out为边界处计示压强
+# u_in is the velocity at the top
+# v_wall is the velocity at the sides
+# p_out is the displayed pressure at the boundary
 
 # 建立空间object
 cavity = Space()
@@ -47,7 +49,8 @@ cavity.CreateMesh(rowpts, colpts)
 cavity.SetDeltas(breadth, length)
 water = Fluid(rho, mu)
 
-# 建立边界object
+# 建立边界对象
+# set up the object of the boundary
 # 速度
 flow = Boundary("D", u_in)
 noslip = Boundary("D", v_wall)
@@ -57,6 +60,7 @@ pressureatm = Boundary("D", p_out)
 # 用户输入结束
 
 # 初始化
+# initialization
 t = 0
 i = 0
 
@@ -85,13 +89,14 @@ while (t < time):
     SolveMomentumEquation(cavity, water)
 
     SetCentrePUV(cavity)
-    if (file_flag == 1):
+    if file_flag == 1:
         WriteToFile(cavity, i, interval)
 
     t += timestep
     i += 1
-# 运行结束
+# end of the main function
 
+# define the display of the result
 # 结果可视化设置
 x = np.linspace(0, length, colpts)
 y = np.linspace(0, breadth, rowpts)
@@ -117,7 +122,7 @@ v_g = [0, 0.1836, 0.19713, 0.20920, 0.22965, 0.28124, 0.30203, 0.30174, 0.05186,
 y_g = [breadth * y_g[i] for i in range(len(y_g))]
 x_g = [length * x_g[i] for i in range(len(x_g))]
 
-if (plot_flag == 1):
+if plot_flag == 1:
     plt.figure(figsize=(20, 20))
     plt.contourf(X, Y, p_c, cmap=cm.viridis)
     plt.colorbar()
