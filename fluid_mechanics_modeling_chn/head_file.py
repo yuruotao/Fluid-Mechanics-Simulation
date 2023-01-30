@@ -1,9 +1,9 @@
 import os
-
 import numpy as np
 
 
-# CLASS CONFIGURATION 配置类
+# CLASS CONFIGURATION
+# 配置类
 class Boundary:
     def __init__(self, boundary_type, boundary_value):
         self.DefineBoundary(boundary_type, boundary_value)
@@ -50,6 +50,7 @@ class Space:
 
 
 # 定义边界围成的区域
+# define the regions limited by the border
 
 
 class Fluid:
@@ -62,10 +63,12 @@ class Fluid:
 
 
 # 定义区域内部的流体，其特征由密度和粘度表示
+# define the fluid within the region, which is characterized by rho and viscosity
 
 
 # 设置边界条件
 # U,V为两轴，下面设置速度的边界条件
+# set the bound parameters
 
 def SetUBoundary(space, left, right, top, bottom):
     if left.type == "D":
@@ -221,6 +224,7 @@ def SolvePressurePoisson(space, fluid, left, right, top, bottom):
 
 
 # 泊松压力方程
+# Poisson Stress function
 
 
 def SolveMomentumEquation(space, fluid):

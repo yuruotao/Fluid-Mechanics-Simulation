@@ -1,5 +1,4 @@
 from __future__ import division
-
 import matplotlib.animation as animation
 from matplotlib.animation import PillowWriter
 

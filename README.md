@@ -1,2 +1,5 @@
 # Fluid-Mechanics-Simulaition
-This project uses python to build a simulation of 2d fluid
+
+This project uses python to build a simulation of 2d fluid based on Stokes equations
+
+##
