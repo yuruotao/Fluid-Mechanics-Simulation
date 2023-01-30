@@ -13,12 +13,12 @@ plt.rcParams['axes.unicode_minus'] = False
 # 定义空间、时间参数
 # define the parameters
 length = 4
-breadth = 4
+width = 4
 colpts = 257
 rowpts = 257
 time = 10
 # length为x方向计算区域的长度
-# breadth为y方向计算区域的长度
+# width为y方向计算区域的长度
 # colpts为x方向格点数（奇数）
 # rowpts为y方向格点数（奇数）
 # time为模拟时间
@@ -46,7 +46,7 @@ p_out = 0
 # 建立空间object
 cavity = Space()
 cavity.CreateMesh(rowpts, colpts)
-cavity.SetDeltas(breadth, length)
+cavity.SetDeltas(width, length)
 water = Fluid(rho, mu)
 
 # 建立边界对象
@@ -68,7 +68,7 @@ print("########           模拟开始            ########")
 print("#############################################")
 print("# 模拟时间: {0:.2f}".format(time))
 print("# 格点: {0} x {1}".format(colpts, rowpts))
-print("# Re/u: {0:.2f}\tRe/v:{1:.2f}".format(rho * length / mu, rho * breadth / mu))
+print("# Re/u: {0:.2f}\tRe/v:{1:.2f}".format(rho * length / mu, rho * width / mu))
 print("# 输出保存: {0}".format(bool(file_flag)))
 MakeResultDirectory(wipe=True)
 
@@ -99,7 +99,7 @@ while (t < time):
 # define the display of the result
 # 结果可视化设置
 x = np.linspace(0, length, colpts)
-y = np.linspace(0, breadth, rowpts)
+y = np.linspace(0, width, rowpts)
 [X, Y] = np.meshgrid(x, y)
 
 u = cavity.u
@@ -119,7 +119,7 @@ x_g = [0, 0.0625, 0.0703, 0.0781, 0.0983, 0.1563, 0.2266, 0.2344, 0.5, 0.8047, 0
 v_g = [0, 0.1836, 0.19713, 0.20920, 0.22965, 0.28124, 0.30203, 0.30174, 0.05186, -0.38598, -0.44993, -0.23827, -0.22847,
        -0.19254, -0.15663, -0.12146]
 
-y_g = [breadth * y_g[i] for i in range(len(y_g))]
+y_g = [width * y_g[i] for i in range(len(y_g))]
 x_g = [length * x_g[i] for i in range(len(x_g))]
 
 if plot_flag == 1:

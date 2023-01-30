@@ -55,7 +55,7 @@ sorted_iterations = np.sort(iterations)
 # 创建数组和网格
 # set up array and grids
 x = np.linspace(0, length, colpts)
-y = np.linspace(0, breadth, rowpts)
+y = np.linspace(0, width, rowpts)
 [X, Y] = np.meshgrid(x, y)
 
 # 定义streamplot的编号
@@ -66,13 +66,13 @@ index_cut_y = int(rowpts / 10)
 # 产生空白图片
 # generate a blank picture
 fig = plt.figure(figsize=(16, 8))
-ax = plt.axes(xlim=(0, length), ylim=(0, breadth))
+ax = plt.axes(xlim=(0, length), ylim=(0, width))
 
 # 初始等高线图
 # initialize the contour plot
 p_p, u_p, v_p = read_datafile(0)
 ax.set_xlim([0, length])
-ax.set_ylim([0, breadth])
+ax.set_ylim([0, width])
 ax.set_xlabel("$x$", fontsize=12)
 ax.set_ylabel("$y$", fontsize=12)
 ax.set_title("Frame No: 0")
@@ -90,7 +90,7 @@ def animate(i):
     p_p, u_p, v_p = read_datafile(iteration)
     ax.clear()
     ax.set_xlim([0, length])
-    ax.set_ylim([0, breadth])
+    ax.set_ylim([0, width])
     ax.set_xlabel("$x$", fontsize=12)
     ax.set_ylabel("$y$", fontsize=12)
     ax.set_title("Frame No: {0}".format(i))
